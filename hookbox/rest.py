@@ -212,7 +212,11 @@ class HookboxRest(object):
 def get_form(environ):
     form = {}
     if environ['REQUEST_METHOD'].upper() == 'POST':
-        qs = environ['wsgi.input'].read()
+        data = environ['wsgi.input'].read()
+        try:
+            return json.loads(data)
+        except ValueError, e:
+            raise ExpectedException("Invalid json data.")
     else:
         qs = environ['QUERY_STRING']
     for key, val in cgi.parse_qs(qs).items():
