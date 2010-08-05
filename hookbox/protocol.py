@@ -99,7 +99,7 @@ class HookboxConn(object):
         self.cookie_id = self.cookies.get(self.cookie_identifier, None)
         self.server.connect(self)
         self.state = 'connected'
-        self.send_frame('CONNECTED', { 'user': self.user.get_info() })
+        self.send_frame('CONNECTED', {'user': self.user.get_info()})
     
     def frame_SUBSCRIBE(self, fid, fargs):
         if self.state != 'connected':
