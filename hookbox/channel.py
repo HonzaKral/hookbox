@@ -291,7 +291,7 @@ class Channel(object):
         frame["history_size"] = self.history_size
         frame["state"] = self.state
         if self.presenceful:
-            frame['presence'] = [ subscriber.get_name() for subscriber in self.subscribers ]
+            frame['presence'] = [ subscriber.get_info() for subscriber in self.subscribers ]
         else:
             frame['presence'] = [];
         return frame
