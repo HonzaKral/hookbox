@@ -287,7 +287,7 @@ class Channel(object):
             self.state = {}
         self.state_broadcast(**changes)
         
-    def _build_subscribe_frame(self, user, user_data, initial_data=None):
+    def _build_subscribe_frame(self, user, user_data={}, initial_data=None):
         frame = {"channel_name": self.name, "user": user.get_name(), 'user_data': user_data}
         frame["history"] = self.history
         frame["history_size"] = self.history_size
