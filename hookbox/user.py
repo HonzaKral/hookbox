@@ -6,12 +6,17 @@ class User(object):
         self.connections = []
         self.channels = []
         self._temp_cookie = ""
+        self.info = {}
+
     def serialize(self):
         return {
             'channels': [ chan.name for chan in self.channels ],
             'connections': [ conn.id for conn in self.connections ],
             'name': self.name
         }
+
+    def get_info(self):
+        return dict(name=self.name, **self.info)
         
     def add_connection(self, conn):
         self.connections.append(conn)

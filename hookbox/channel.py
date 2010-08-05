@@ -191,7 +191,7 @@ class Channel(object):
             self.history.append(('PUBLISH', frame))
             self.prune_history()
 
-    def subscribe(self, user, conn=None, needs_auth=True, user_data={}):
+    def subscribe(self, user, conn=None, needs_auth=True):
 
         if user in self.subscribers:
             return
@@ -207,8 +207,6 @@ class Channel(object):
             if 'initial_data' in options:
                 has_initial_data = True
                 initial_data = options['initial_data']
-            if 'user_data' in options:
-                user_data.update(options['user_data'])
             self.server.maybe_auto_subscribe(user, options, conn=conn)
             
         if has_initial_data or self.history:
@@ -218,19 +216,19 @@ class Channel(object):
         self.subscribers.append(user)
         user.channel_subscribed(self)
         _now = get_now()
-        frame = {"channel_name": self.name, "user": user.get_name(), "datetime": _now, 'user_data': user_data}
+        frame = {"channel_name": self.name, "user": user.get_info(), "datetime": _now}
         self.server.admin.channel_event('subscribe', self.name, frame)
         if self.presenceful:
             for subscriber in self.subscribers:
                 if subscriber == user: continue
                 subscriber.send_frame('SUBSCRIBE', frame)
                 
-        frame = self._build_subscribe_frame(user, user_data, initial_data)
+        frame = self._build_subscribe_frame(user, initial_data)
         
         user.send_frame('SUBSCRIBE', frame)
             
         if self.history_size:
-            self.history.append(('SUBSCRIBE', {"user": user.get_name(), "datetime": _now, 'user_data': user_data }))
+            self.history.append(('SUBSCRIBE', {"user": user.get_info(), "datetime": _now}))
             self.prune_history()
 
     def state_del(self, key):
@@ -287,8 +285,8 @@ class Channel(object):
             self.state = {}
         self.state_broadcast(**changes)
         
-    def _build_subscribe_frame(self, user, user_data={}, initial_data=None):
-        frame = {"channel_name": self.name, "user": user.get_name(), 'user_data': user_data}
+    def _build_subscribe_frame(self, user, initial_data=None):
+        frame = {"channel_name": self.name, "user": user.get_info()}
         frame["history"] = self.history
         frame["history_size"] = self.history_size
         frame["state"] = self.state

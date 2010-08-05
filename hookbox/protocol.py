@@ -21,7 +21,7 @@ class HookboxConn(object):
     def serialize(self):
         return {
             "id": self.id,
-            "user": self.user and self.user.get_name(),
+            "user": self.user and self.user.get_info(),
             "cookie": self.cookie_string
         }
         
@@ -99,7 +99,7 @@ class HookboxConn(object):
         self.cookie_id = self.cookies.get(self.cookie_identifier, None)
         self.server.connect(self)
         self.state = 'connected'
-        self.send_frame('CONNECTED', { 'name': self.user.get_name() })
+        self.send_frame('CONNECTED', { 'user': self.user.get_info() })
     
     def frame_SUBSCRIBE(self, fid, fargs):
         if self.state != 'connected':
@@ -107,7 +107,7 @@ class HookboxConn(object):
         if 'channel_name' not in fargs:
             return self.send_error(fid, "channel_name required")
         channel = self.server.get_channel(self, fargs['channel_name'])
-        channel.subscribe(self.user, conn=self, user_data=fargs.get('user_data', {}))
+        channel.subscribe(self.user, conn=self)
             
     def frame_UNSUBSCRIBE(self, fid, fargs):
         if self.state != 'connected':

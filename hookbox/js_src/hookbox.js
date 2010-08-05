@@ -61,7 +61,7 @@ var Subscription = Class(function(supr) {
 				}
 				
 				for (var i = 0, user; user = this.presence[i]; ++i) {
-					if (user == args.user) {
+					if (user.name == args.user.name) {
 						this.presence.splice(i, 1);
 						break;
 					}
@@ -154,7 +154,7 @@ HookBoxProtocol = Class([RTJPProtocol], function(supr) {
 		switch(fName) {
 			case 'CONNECTED':
 				this.connected = true;
-				this.username = fArgs.name;
+				this.username = fArgs.user.name;
 				while (this._buffered_subs.length) {
 					var chan = this._buffered_subs.shift();
 					this.sendFrame('SUBSCRIBE', {channel_name: chan});
@@ -166,7 +166,7 @@ HookBoxProtocol = Class([RTJPProtocol], function(supr) {
 				this.onOpen();
 				break;
 			case 'SUBSCRIBE':
-				if (fArgs.user == this.username) {
+				if (fArgs.user.name == this.username) {
 					var s = new Subscription(fArgs);
 					this._subscriptions[fArgs.channel_name] = s;
 					s._onCancel = bind(this, function() {
@@ -193,7 +193,7 @@ HookBoxProtocol = Class([RTJPProtocol], function(supr) {
 				var sub = this._subscriptions[fArgs.channel_name];
 				sub.canceled = true;
 				sub.frame(fName, fArgs);
-				if (fArgs.user == this.username) {
+				if (fArgs.user.name == this.username) {
 					delete this._subscriptions[fArgs.channel_name];
 					this.onUnsubscribed(sub, fArgs);
 				}

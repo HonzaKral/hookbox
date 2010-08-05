@@ -80,9 +80,10 @@ class HookboxRest(object):
             raise ExpectedException("User %s doesn't exist" % (name,))
         channel = self.server.get_channel(None, channel_name)
         user = self.server.get_user(name)
+        if 'user_data' in form:
+            user.info.update(form['user_data'])
 
-        user_data = form.get('user_data', {})
-        channel.subscribe(user, needs_auth=False, user_data=user_data)
+        channel.subscribe(user, needs_auth=False)
         start_response('200 Ok', [])
         return json.dumps([True, {}])
 
