@@ -8,6 +8,9 @@ class User(object):
         self._temp_cookie = ""
         self.info = {}
 
+    def __eq__(self, other):
+        return isinstance(other, User) and self.name == other.name
+
     def serialize(self):
         return {
             'channels': [ chan.name for chan in self.channels ],

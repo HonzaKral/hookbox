@@ -176,9 +176,9 @@ class Channel(object):
 
         if not self.anonymous:
             if 'originator' in kwargs:
-                frame['user'] = kwargs['originator']
+                frame['user'] = self.server.get_user(kwargs['originator']).get_info()
             else:
-                frame['user'] = user.get_name()
+                frame['user'] = user.get_info()
 
         omit = None
         if not self.reflective:
@@ -310,7 +310,7 @@ class Channel(object):
             if not (success or force_auth):
                 raise ExpectedException(options.get('error', 'Unauthorized'))
             self.server.maybe_auto_subscribe(user, options, conn=conn)
-        frame = {"channel_name": self.name, "user": user.get_name(), 'datetime': get_now()}
+        frame = {"channel_name": self.name, "user": user.get_info(), 'datetime': get_now()}
         self.server.admin.channel_event('unsubscribe', self.name, frame)
         if self.presenceful:
             for subscriber in self.subscribers:
