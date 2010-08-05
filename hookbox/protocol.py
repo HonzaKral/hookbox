@@ -107,7 +107,7 @@ class HookboxConn(object):
         if 'channel_name' not in fargs:
             return self.send_error(fid, "channel_name required")
         channel = self.server.get_channel(self, fargs['channel_name'])
-        channel.subscribe(self.user, conn=self)
+        channel.subscribe(self.user, conn=self, user_data=fargs.get('user_data', {}))
             
     def frame_UNSUBSCRIBE(self, fid, fargs):
         if self.state != 'connected':

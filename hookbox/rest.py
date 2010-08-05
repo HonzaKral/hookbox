@@ -80,7 +80,9 @@ class HookboxRest(object):
             raise ExpectedException("User %s doesn't exist" % (name,))
         channel = self.server.get_channel(None, channel_name)
         user = self.server.get_user(name)
-        channel.subscribe(user, needs_auth=False)
+
+        user_data = form.get('user_data', {})
+        channel.subscribe(user, needs_auth=False, user_data=user_data)
         start_response('200 Ok', [])
         return json.dumps([True, {}])
 
@@ -110,6 +112,7 @@ class HookboxRest(object):
         if self.server.exists_channel(channel_name):
             raise ExpectedException("Channel already exists")
 
+        # make sure keys are strings since we intend to use them as python kwargs
         options = dict((str(k), v) for k,v in form.items() if k != 'channel_name')
         self.server.do_create_channel(channel_name, **options)
         start_response('200 Ok', [])
