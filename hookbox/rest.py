@@ -161,7 +161,7 @@ class HookboxRest(object):
         if 'val' not in form:
             raise ExpectedException("Missing 'val' argument")
         try:
-            val = json.loads(form['val'])
+            val = form['val']
         except:
             raise ExpectedException('Invalid json: "%s"' % (val,))
             
