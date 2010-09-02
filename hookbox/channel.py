@@ -227,7 +227,7 @@ class Channel(object):
         
         user.send_frame('SUBSCRIBE', frame)
             
-        if self.history_size:
+        if self.presenceful and self.history_size:
             self.history.append(('SUBSCRIBE', {"user": user.get_info(), "datetime": _now}))
             self.prune_history()
 
@@ -319,7 +319,7 @@ class Channel(object):
         user.send_frame('UNSUBSCRIBE', frame)
         self.subscribers.remove(user)
         user.channel_unsubscribed(self)
-        if self.history_size:
+        if self.presenceful and self.history_size:
             del frame['channel_name']
             self.history.append(('UNSUBSCRIBE', frame))
             self.prune_history()
